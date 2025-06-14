@@ -13,28 +13,27 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    @Value("${server.port}")
-    private String serverPort;
+        @Value("${server.port}")
+        private String serverPort;
 
-    @Bean
-    public OpenAPI projectTrackerOpenAPI() {
-        Server localServer = new Server()
-                .url("http://localhost:" + serverPort)
-                .description("Local Development Server");
+        @Bean
+        public OpenAPI projectTrackerOpenAPI() {
+                Server localServer = new Server()
+                                .url("http://localhost:" + serverPort)
+                                .description("Local Development Server");
 
-        Contact contact = new Contact()
-                .name("Project Tracker Team")
-                .email("dav.ndungutse@gmail.com");
+                Contact contact = new Contact()
+                                .name("Project Tracker Team")
+                                .email("dav.ndungutse@gmail.com");
 
+                Info info = new Info()
+                                .title("Project Tracker API")
+                                .description("RESTful API for managing projects, tasks, and developers")
+                                .version("1.0.0")
+                                .contact(contact);
 
-        Info info = new Info()
-                .title("Project Tracker API")
-                .description("RESTful API for managing projects, tasks, and developers")
-                .version("1.0.0")
-                .contact(contact);
-
-        return new OpenAPI()
-                .info(info)
-                .servers(List.of(localServer));
-    }
+                return new OpenAPI()
+                                .info(info)
+                                .servers(List.of(localServer));
+        }
 }
