@@ -23,10 +23,10 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest loginRequest) {
         try {
-            // Authenticate user
+            // Authenticate user with username or email
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
+                            loginRequest.getUsernameOrEmail(),
                             loginRequest.getPassword()));
 
             // Get authenticated user details
@@ -45,7 +45,7 @@ public class AuthService {
                     .build();
 
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new BadCredentialsException("Invalid username/email or password");
         }
     }
 }
