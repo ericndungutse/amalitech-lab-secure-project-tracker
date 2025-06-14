@@ -1,10 +1,12 @@
 package com.ndungutse.project_tracker.dto;
 
+import lombok.Data;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Map;
 
+@Data
 public class PageResponse<T> {
     private List<T> content;
     private Map<String, Object> pagination;
@@ -23,19 +25,4 @@ public class PageResponse<T> {
         this.content = page.getContent();
     }
 
-    public List<T> getContent() {
-        return content;
-    }
-
-    public void setContent(List<T> content) {
-        this.content = content;
-    }
-
-    public Map<String, Object> getPagination() {
-        return pagination;
-    }
-
-    public void setPagination(Map<String, Object> pagination) {
-        this.pagination = pagination;
-    }
 }

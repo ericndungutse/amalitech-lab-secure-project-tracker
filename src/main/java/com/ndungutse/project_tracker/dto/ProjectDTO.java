@@ -4,6 +4,11 @@ import com.ndungutse.project_tracker.model.Project;
 
 import java.time.LocalDate;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class ProjectDTO {
     private Long id;
     private String name;
@@ -11,9 +16,7 @@ public class ProjectDTO {
     private LocalDate deadline;
     private boolean status;
 
-    // Default constructor
-    public ProjectDTO() {
-    }
+    // Default constructor is handled by @NoArgsConstructor
 
     // Constructor with parameters
     public ProjectDTO(
@@ -57,56 +60,16 @@ public class ProjectDTO {
         return new ProjectDTO(project);
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+    // Getters and Setters are handled by @Data
 
     // Convert DTO to Entity
     public Project toEntity() {
-        Project project = new Project(
-                this.name,
-                this.description,
-                this.deadline,
-                this.status
-        );
-        project.setId(this.id);
-        return project;
+        return Project.builder()
+                .name(this.name)
+                .description(this.description)
+                .deadline(this.deadline)
+                .status(this.status)
+                .id(this.id)
+                .build();
     }
 }

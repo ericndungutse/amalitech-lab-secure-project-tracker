@@ -83,13 +83,16 @@ public class TaskDTO {
             Project project,
             Developer developer
     ) {
-        return new Task(
-                this.title,
-                this.description,
-                this.status,
-                this.dueDate,
-                project,
-                developer);
+        return Task.builder()
+                .id(this.id)
+                .title(this.title)
+                .description(this.description)
+                .status(this.status)
+                .dueDate(this.dueDate)
+                .project(project)
+                .developer(developer)
+                .developerId(this.developerId)
+                .build();
     }
 
     // Getters and Setters
