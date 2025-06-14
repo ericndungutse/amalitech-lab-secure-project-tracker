@@ -5,8 +5,18 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 @Entity
 @Table(name = "developers")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Developer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -16,61 +26,13 @@ public class Developer {
     private String skills;
 
     @OneToMany(mappedBy = "developer", cascade = CascadeType.ALL)
+    @ToString.Exclude  // Prevent circular reference in toString()
+    @Builder.Default   // Use this default value when using the builder pattern
     private List<Task> tasks = new ArrayList<>();
 
-    public Developer() {
-    }
+    // Constructors are handled by @NoArgsConstructor and @AllArgsConstructor
 
-    public Developer(
-            String name,
-            String email,
-            String skills
-    ) {
-        this.name = name;
-        this.email = email;
-        this.skills = skills;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String skills) {
-        this.skills = skills;
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
+    // Getters and Setters are handled by @Data
 
     public void addTask(Task task) {
         // Maintain consistency in the current session.

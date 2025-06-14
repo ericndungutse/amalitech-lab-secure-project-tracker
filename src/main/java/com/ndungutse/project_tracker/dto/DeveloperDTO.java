@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DeveloperDTO {
     private Long id;
     private String name;
@@ -14,24 +21,8 @@ public class DeveloperDTO {
     private String skills;
     private List<Long> taskIds;
 
-    // Default constructor
-    public DeveloperDTO() {
-    }
-
-    // Constructor with all parameters
-    public DeveloperDTO(
-            Long id,
-            String name,
-            String email,
-            String skills,
-            List<Long> taskIds
-    ) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.skills = skills;
-        this.taskIds = taskIds;
-    }
+    // Constructor with all parameters is handled by @AllArgsConstructor
+    // Default constructor is handled by @NoArgsConstructor
 
     // Constructor without task ids
     public DeveloperDTO(
@@ -65,53 +56,13 @@ public class DeveloperDTO {
 
     // Convert DTO to Entity
     public Developer toEntity() {
-        Developer developer = new Developer(
-                this.name,
-                this.email,
-                this.skills
-        );
-        developer.setId(this.id);
-        return developer;
+        return Developer.builder()
+                .id(this.id)
+                .name(this.name)
+                .email(this.email)
+                .skills(this.skills)
+                .build();
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String skills) {
-        this.skills = skills;
-    }
-
-    public List<Long> getTaskIds() {
-        return taskIds;
-    }
-
-    public void setTaskIds(List<Long> taskIds) {
-        this.taskIds = taskIds;
-    }
+    // Getters and Setters are handled by @Data
 }
