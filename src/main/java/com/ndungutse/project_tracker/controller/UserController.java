@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/admin/users")
 @Tag(name = "User", description = "User management APIs")
 public class UserController {
 
@@ -40,7 +40,6 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can create users", content = @Content)
     })
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> createUser(
             @Parameter(description = "User data to create", required = true) @Valid @RequestBody CreateUserRequest request) {
         try {
@@ -58,7 +57,6 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can view all users", content = @Content)
     })
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -101,7 +99,6 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can update users", content = @Content)
     })
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(
             @Parameter(description = "ID of the user to update", required = true) @PathVariable Long id,
             @Parameter(description = "Updated user data", required = true) @Valid @RequestBody UpdateUserRequest request) {
@@ -122,7 +119,6 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can delete users", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "ID of the user to delete", required = true) @PathVariable Long id) {
         try {
