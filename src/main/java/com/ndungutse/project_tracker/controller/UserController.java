@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,9 +36,11 @@ public class UserController {
     @Operation(summary = "Create a new user", description = "Creates a new user with the provided details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can create users", content = @Content)
     })
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> createUser(
             @Parameter(description = "User data to create", required = true) @Valid @RequestBody CreateUserRequest request) {
         try {
@@ -51,9 +54,11 @@ public class UserController {
     // Get all users
     @Operation(summary = "Get all users", description = "Returns a list of all users")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can view all users", content = @Content)
     })
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -92,9 +97,11 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can update users", content = @Content)
     })
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(
             @Parameter(description = "ID of the user to update", required = true) @PathVariable Long id,
             @Parameter(description = "Updated user data", required = true) @Valid @RequestBody UpdateUserRequest request) {
@@ -111,9 +118,11 @@ public class UserController {
     @Operation(summary = "Delete a user", description = "Deletes a user based on the provided ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted successfully", content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can delete users", content = @Content)
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "ID of the user to delete", required = true) @PathVariable Long id) {
         try {
