@@ -1,8 +1,8 @@
 package com.ndungutse.project_tracker.dto;
 
-import com.ndungutse.project_tracker.model.Developer;
 import com.ndungutse.project_tracker.model.Project;
 import com.ndungutse.project_tracker.model.Task;
+import com.ndungutse.project_tracker.model.User;
 
 import java.time.LocalDate;
 
@@ -13,9 +13,9 @@ public class TaskDTO {
     private boolean status;
     private LocalDate dueDate;
     private Long projectId;
-    private Long developerId;
+    private Long assignedUserId;
     private ProjectDTO projectDTO;
-    private DeveloperDTO developerDTO;
+    private UserDTO assignedUserDTO;
 
     // Default constructor
     public TaskDTO() {
@@ -29,15 +29,14 @@ public class TaskDTO {
             boolean status,
             LocalDate dueDate,
             Long projectId,
-            Long developerId
-    ) {
+            Long assignedUserId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.dueDate = dueDate;
         this.projectId = projectId;
-        this.developerId = developerId;
+        this.assignedUserId = assignedUserId;
     }
 
     // Constructor without ID (for creating new tasks)
@@ -47,14 +46,13 @@ public class TaskDTO {
             boolean status,
             LocalDate dueDate,
             Long projectId,
-            Long developerId
-    ) {
+            Long assignedUserId) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.dueDate = dueDate;
         this.projectId = projectId;
-        this.developerId = developerId;
+        this.assignedUserId = assignedUserId;
     }
 
     // Convert Entity to DTO
@@ -62,18 +60,18 @@ public class TaskDTO {
         TaskDTO dto = new TaskDTO();
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
-        dto.setDeveloperId(task.getDeveloper().getId());
         dto.setDescription(task.getDescription());
         dto.setStatus(task.isStatus());
         dto.setDueDate(task.getDueDate());
-        dto.projectDTO = ProjectDTO.fromEntity(task.getProject());
+        dto.setProjectDTO(ProjectDTO.fromEntity(task.getProject()));
 
         if (task.getProject() != null) {
             dto.setProjectId(task.getProject().getId());
         }
 
-        if (task.getDeveloper() != null) {
-            dto.setDeveloperDTO(DeveloperDTO.fromEntity(task.getDeveloper()));
+        if (task.getAssignedUser() != null) {
+            dto.setAssignedUserId(task.getAssignedUser().getId());
+            dto.setAssignedUserDTO(UserDTO.fromEntity(task.getAssignedUser()));
         }
         return dto;
     }
@@ -81,8 +79,7 @@ public class TaskDTO {
     // Convert DTO to Entity
     public Task toEntity(
             Project project,
-            Developer developer
-    ) {
+            User assignedUser) {
         return Task.builder()
                 .id(this.id)
                 .title(this.title)
@@ -90,8 +87,8 @@ public class TaskDTO {
                 .status(this.status)
                 .dueDate(this.dueDate)
                 .project(project)
-                .developer(developer)
-                .developerId(this.developerId)
+                .assignedUser(assignedUser)
+                .assignedUserId(this.assignedUserId)
                 .build();
     }
 
@@ -144,12 +141,12 @@ public class TaskDTO {
         this.projectId = projectId;
     }
 
-    public Long getDeveloperId() {
-        return developerId;
+    public Long getAssignedUserId() {
+        return assignedUserId;
     }
 
-    public void setDeveloperId(Long developerId) {
-        this.developerId = developerId;
+    public void setAssignedUserId(Long assignedUserId) {
+        this.assignedUserId = assignedUserId;
     }
 
     public ProjectDTO getProjectDTO() {
@@ -160,11 +157,11 @@ public class TaskDTO {
         this.projectDTO = projectDTO;
     }
 
-    public DeveloperDTO getDeveloperDTO() {
-        return developerDTO;
+    public UserDTO getAssignedUserDTO() {
+        return assignedUserDTO;
     }
 
-    public void setDeveloperDTO(DeveloperDTO developerDTO) {
-        this.developerDTO = developerDTO;
+    public void setAssignedUserDTO(UserDTO assignedUserDTO) {
+        this.assignedUserDTO = assignedUserDTO;
     }
 }

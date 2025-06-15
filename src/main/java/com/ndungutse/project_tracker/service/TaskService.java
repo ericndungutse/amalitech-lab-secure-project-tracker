@@ -1,11 +1,11 @@
 package com.ndungutse.project_tracker.service;
 
-import com.ndungutse.project_tracker.dto.DeveloperDTO;
 import com.ndungutse.project_tracker.dto.ProjectDTO;
 import com.ndungutse.project_tracker.dto.TaskDTO;
-import com.ndungutse.project_tracker.model.Developer;
+import com.ndungutse.project_tracker.dto.UserDTO;
 import com.ndungutse.project_tracker.model.Project;
 import com.ndungutse.project_tracker.model.Task;
+import com.ndungutse.project_tracker.model.User;
 import com.ndungutse.project_tracker.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,16 +18,15 @@ import java.util.stream.Collectors;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectService projectService;
-    private final DeveloperService developerService;
+    private final UserService userService;
 
     public TaskService(
             TaskRepository taskRepository,
             ProjectService projectService,
-            DeveloperService developerService
-    ) {
+            UserService userService) {
         this.taskRepository = taskRepository;
         this.projectService = projectService;
-        this.developerService = developerService;
+        this.userService = userService;
     }
 
     // Create
@@ -46,16 +45,16 @@ public class TaskService {
             return Optional.empty();
         }
 
-        // Get the developer entity if provided
-        Developer developer = null;
-        if (taskDTO.getDeveloperId() != null && developerService.exists(taskDTO.getDeveloperId())) {
-            developer = developerService.getById(taskDTO.getDeveloperId())
-                    .map(DeveloperDTO::toEntity)
+        // Get the assigned user entity if provided
+        User assignedUser = null;
+        if (taskDTO.getAssignedUserId() != null) {
+            assignedUser = userService.getUserById(taskDTO.getAssignedUserId())
+                    .map(UserDTO::toEntity)
                     .orElse(null);
         }
 
         // Create and save the task
-        Task task = taskDTO.toEntity(project.get(), developer);
+        Task task = taskDTO.toEntity(project.get(), assignedUser);
         Task savedTask = taskRepository.save(task);
 
         return Optional.of(TaskDTO.fromEntity(savedTask));
@@ -65,9 +64,8 @@ public class TaskService {
     public List<TaskDTO> getAll() {
         List<Task> tasks = taskRepository.findAll();
         return tasks.stream()
-                .map((task) -> {
-                    return new TaskDTO(task.getId(), task.getTitle(), task.getDescription(), task.isStatus(), task.getDueDate(), task.getDeveloperId(), task.getProject().getId());
-                }).collect(Collectors.toList());
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public Optional<TaskDTO> getById(Long id) {
@@ -79,8 +77,7 @@ public class TaskService {
     @Transactional
     public Optional<TaskDTO> update(
             Long id,
-            TaskDTO updatedTaskDTO
-    ) {
+            TaskDTO updatedTaskDTO) {
         Optional<Task> existingTaskOpt = taskRepository.findById(id);
 
         if (existingTaskOpt.isEmpty()) {
@@ -115,14 +112,12 @@ public class TaskService {
             projectOpt.ifPresent(existingTask::setProject);
         }
 
-        // Update developer if provided and exists
-        if (updatedTaskDTO.getDeveloperId() != null &&
-                developerService.exists(updatedTaskDTO.getDeveloperId())) {
+        // Update assigned user if provided and exists
+        if (updatedTaskDTO.getAssignedUserId() != null) {
+            Optional<User> userOpt = userService.getUserById(updatedTaskDTO.getAssignedUserId())
+                    .map(UserDTO::toEntity);
 
-            Optional<Developer> developerOpt = developerService.getById(updatedTaskDTO.getDeveloperId())
-                    .map(DeveloperDTO::toEntity);
-
-            developerOpt.ifPresent(existingTask::setDeveloper);
+            userOpt.ifPresent(existingTask::setAssignedUser);
         }
 
         Task updatedTask = taskRepository.save(existingTask);
