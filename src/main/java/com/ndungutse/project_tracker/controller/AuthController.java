@@ -2,6 +2,7 @@ package com.ndungutse.project_tracker.controller;
 
 import com.ndungutse.project_tracker.dto.LoginRequest;
 import com.ndungutse.project_tracker.dto.LoginResponse;
+import com.ndungutse.project_tracker.dto.RegisterRequest;
 import com.ndungutse.project_tracker.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,6 +28,25 @@ public class AuthController {
 
     public AuthController(AuthService authService) {
         this.authService = authService;
+    }
+
+    @Operation(summary = "Register", description = "Registers a new user and returns a JWT token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully registered", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input or email already exists", content = @Content)
+    })
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        try {
+            LoginResponse loginResponse = authService.register(registerRequest);
+            return ResponseEntity.ok(loginResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
     @Operation(summary = "Login", description = "Authenticates a user and returns a JWT token")
