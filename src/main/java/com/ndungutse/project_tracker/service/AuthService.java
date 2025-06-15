@@ -35,31 +35,26 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
-        try {
-            // Authenticate user with username or email
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsernameOrEmail(),
-                            loginRequest.getPassword()));
+        // Authenticate user with username or email
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsernameOrEmail(),
+                        loginRequest.getPassword()));
 
-            // Get authenticated user details
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        // Get authenticated user details
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-            // Generate JWT token
-            String token = jwtUtils.generateJwtTokenFromUsername(userDetails);
+        // Generate JWT token
+        String token = jwtUtils.generateJwtTokenFromUsername(userDetails);
 
-            // Build and return response
-            return LoginResponse.builder()
-                    .token(token)
-                    .userId(userDetails.getUserId())
-                    .username(userDetails.getUsername())
-                    .email(userDetails.getUser().getEmail())
-                    .role(userDetails.getRoleName())
-                    .build();
-
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid username/email or password");
-        }
+        // Build and return response
+        return LoginResponse.builder()
+                .token(token)
+                .userId(userDetails.getUserId())
+                .username(userDetails.getUsername())
+                .email(userDetails.getUser().getEmail())
+                .role(userDetails.getRoleName())
+                .build();
     }
 
     @Transactional

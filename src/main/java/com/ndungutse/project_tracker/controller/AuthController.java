@@ -37,16 +37,8 @@ public class AuthController {
     })
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        try {
-            LoginResponse loginResponse = authService.register(registerRequest);
-            return ResponseEntity.ok(loginResponse);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        LoginResponse loginResponse = authService.register(registerRequest);
+        return ResponseEntity.ok(loginResponse);
     }
 
     @Operation(summary = "Login", description = "Authenticates a user and returns a JWT token")
@@ -57,15 +49,8 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            LoginResponse loginResponse = authService.login(loginRequest);
-            return ResponseEntity.ok(loginResponse);
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid username or password");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("An error occurred during authentication");
-        }
+        LoginResponse loginResponse = authService.login(loginRequest);
+        return ResponseEntity.ok(loginResponse);
+
     }
 }
