@@ -53,6 +53,7 @@ public class TaskControllerTest {
         taskDTO.setDescription("Test Description");
         taskDTO.setStatus(false); // false = not completed
         taskDTO.setProjectId(1L);
+        taskDTO.setAssignedUserId(1L);
 
         TaskDTO task2 = new TaskDTO();
         task2.setId(2L);
@@ -60,6 +61,7 @@ public class TaskControllerTest {
         task2.setDescription("Another Description");
         task2.setStatus(true); // true = completed
         task2.setProjectId(1L);
+        task2.setAssignedUserId(2L);
 
         taskDTOList = Arrays.asList(taskDTO, task2);
     }
@@ -203,5 +205,63 @@ public class TaskControllerTest {
 
         verify(taskService, times(1)).exists(99L);
         verify(taskService, never()).delete(99L);
+    }
+
+    @Test
+    void getTasksByUser_ShouldReturnUserTasks() throws Exception {
+        List<TaskDTO> userTasks = Arrays.asList(taskDTO);
+        when(taskService.getTasksByUser(1L)).thenReturn(userTasks);
+
+        mockMvc.perform(get("/api/v1/tasks/user/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].title", is("Test Task")))
+                .andExpect(jsonPath("$[0].assignedUserId", is(1)));
+
+        verify(taskService, times(1)).getTasksByUser(1L);
+    }
+
+    @Test
+    void getTasksByProject_ShouldReturnProjectTasks() throws Exception {
+        when(taskService.getTasksByProject(1L)).thenReturn(taskDTOList);
+
+        mockMvc.perform(get("/api/v1/tasks/project/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].projectId", is(1)))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].projectId", is(1)));
+
+        verify(taskService, times(1)).getTasksByProject(1L);
+    }
+
+    @Test
+    void getTasksByStatus_ShouldReturnTasksWithStatus() throws Exception {
+        List<TaskDTO> completedTasks = Arrays.asList(taskDTOList.get(1));
+        when(taskService.getTasksByStatus(true)).thenReturn(completedTasks);
+
+        mockMvc.perform(get("/api/v1/tasks/status/true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(2)))
+                .andExpect(jsonPath("$[0].status", is(true)));
+
+        verify(taskService, times(1)).getTasksByStatus(true);
+    }
+
+    @Test
+    void getTasksByStatus_ShouldReturnTasksWithDifferentStatus() throws Exception {
+        List<TaskDTO> incompleteTasks = Arrays.asList(taskDTOList.get(0));
+        when(taskService.getTasksByStatus(false)).thenReturn(incompleteTasks);
+
+        mockMvc.perform(get("/api/v1/tasks/status/false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].status", is(false)));
+
+        verify(taskService, times(1)).getTasksByStatus(false);
     }
 }

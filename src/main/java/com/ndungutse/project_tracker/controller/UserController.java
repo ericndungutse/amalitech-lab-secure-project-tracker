@@ -15,13 +15,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/admin/users")
 @Tag(name = "User", description = "User management APIs")
 public class UserController {
 
@@ -35,7 +36,8 @@ public class UserController {
     @Operation(summary = "Create a new user", description = "Creates a new user with the provided details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can create users", content = @Content)
     })
     @PostMapping
     public ResponseEntity<UserDTO> createUser(
@@ -51,7 +53,8 @@ public class UserController {
     // Get all users
     @Operation(summary = "Get all users", description = "Returns a list of all users")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved users", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can view all users", content = @Content)
     })
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -92,7 +95,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can update users", content = @Content)
     })
     @PatchMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(
@@ -111,7 +115,8 @@ public class UserController {
     @Operation(summary = "Delete a user", description = "Deletes a user based on the provided ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted successfully", content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Access denied - Only ADMIN role can delete users", content = @Content)
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(

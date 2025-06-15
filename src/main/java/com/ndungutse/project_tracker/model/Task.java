@@ -27,16 +27,14 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
-    @ToString.Exclude  // Prevent circular reference in toString()
+    @ToString.Exclude
     private Project project;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "developer_id")
-    @ToString.Exclude  // Prevent circular reference in toString()
-    private Developer developer;
+    @JoinColumn(name = "assigned_user_id")
+    @ToString.Exclude
+    private User assignedUser;
 
-    @Column(name = "developer_id", insertable = false, updatable = false)
-    private Long developerId;
-
-
+    @Column(name = "assigned_user_id", insertable = false, updatable = false)
+    private Long assignedUserId;
 }

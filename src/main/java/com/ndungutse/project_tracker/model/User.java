@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -27,8 +30,28 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    // Developer specific fields
+    private String skills;
+    private String fullName;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     @ToString.Exclude
     private Role role;
+
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @Builder.Default
+    private List<Task> assignedTasks = new ArrayList<>();
+
+    // Helper methods for managing task relationships
+    public void addTask(Task task) {
+        assignedTasks.add(task);
+        task.setAssignedUser(this);
+    }
+
+    public void removeTask(Task task) {
+        assignedTasks.remove(task);
+        task.setAssignedUser(null);
+    }
 }
