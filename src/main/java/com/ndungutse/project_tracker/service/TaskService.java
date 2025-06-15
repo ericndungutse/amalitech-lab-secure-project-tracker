@@ -73,6 +73,40 @@ public class TaskService {
         return taskOpt.map(TaskDTO::fromEntity);
     }
 
+    // Get tasks by assigned user
+    public List<TaskDTO> getTasksByUser(Long userId) {
+        // First verify that the user exists
+        if (!userService.exists(userId)) {
+            return List.of();
+        }
+
+        List<Task> tasks = taskRepository.findByAssignedUserId(userId);
+        return tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    // Get tasks by project
+    public List<TaskDTO> getTasksByProject(Long projectId) {
+        // First verify that the project exists
+        if (!projectService.exists(projectId)) {
+            return List.of();
+        }
+
+        List<Task> tasks = taskRepository.findByProjectId(projectId);
+        return tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    // Get tasks by status
+    public List<TaskDTO> getTasksByStatus(boolean status) {
+        List<Task> tasks = taskRepository.findByStatus(status);
+        return tasks.stream()
+                .map(TaskDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     // Update
     @Transactional
     public Optional<TaskDTO> update(
