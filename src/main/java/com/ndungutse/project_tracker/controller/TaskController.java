@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -109,9 +110,11 @@ public class TaskController {
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Task updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskDTO.class))),
                         @ApiResponse(responseCode = "404", description = "Task not found", content = @Content),
-                        @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+                        @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+                        @ApiResponse(responseCode = "403", description = "Access denied - Only DEVELOPER role can update tasks", content = @Content)
         })
         @PatchMapping("/{id}")
+        @PreAuthorize("hasRole('DEVELOPER')")
         public ResponseEntity<TaskDTO> updateTask(
                         @Parameter(description = "ID of the task to update", required = true) @PathVariable Long id,
                         @Parameter(description = "Updated task data", required = true) @RequestBody TaskDTO taskDTO) {
