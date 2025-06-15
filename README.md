@@ -212,7 +212,6 @@ http://localhost:3000/swagger-ui.html
 
 - `POST /api/v1/auth/register` - Register new user
 - `POST /api/v1/auth/login` - User login
-- `POST /api/v1/auth/refresh` - Refresh JWT token
 
 ### Project Endpoints
 
@@ -355,21 +354,3 @@ mvn test -Dtest=ProjectServiceTest
    ```bash
    java -jar target/project-tracker-1.0.0.jar
    ```
-
-3. **Docker deployment**
-   ```bash
-   docker build -t project-tracker .
-   docker run -p 3000:3000 project-tracker
-   ```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
